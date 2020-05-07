@@ -1,11 +1,12 @@
 import React from 'react';
+import { Slider } from './../slider';
 
 function App() {
   return (
     <div className="Slider">
-      SLIDER INCOMING
+      <Slider />
     </div>
   );
 }
 
-export default App;
+export { App };

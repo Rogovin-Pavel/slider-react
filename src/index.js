@@ -1,12 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
+import { Slider } from './components/slider';
 import * as serviceWorker from './serviceWorker';
+
+const images = [
+  '/images/box_1.png',
+  '/images/box_2.png',
+  '/images/box_3_1.png',
+];
+
+
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Slider slides={images} />
   </React.StrictMode>,
   document.getElementById('root')
 );
