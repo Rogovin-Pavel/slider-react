@@ -1,12 +1,50 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
+import { Slider } from './components/slider';
 import * as serviceWorker from './serviceWorker';
+import './index.css';
+
+const content = [
+  {
+    type: 'image',
+    url: '/images/box_1.png'
+  },
+  {
+    type: 'image',
+    url: '/images/box_2.png'
+  },
+  {
+    type: 'slider',
+    content: [
+      {
+        type: 'image',
+        url: '/images/box_3_1.png'
+      },
+      {
+        type: 'image',
+        url: '/images/box_3_2.png'
+      },
+      {
+        type: 'image',
+        url: '/images/box_3_3.png'
+      },
+    ]
+  },
+];
+
+
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Slider 
+      slides={content}
+      settings={{
+        sliderDots: true,
+        sliderDirection: 'Y',
+        trackBar: false,
+        showNext: true
+      }} 
+    />
   </React.StrictMode>,
   document.getElementById('root')
 );
