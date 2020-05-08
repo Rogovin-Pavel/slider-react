@@ -118,7 +118,7 @@ const TrackBar = ({ navigateTo, barLength, barDesc }) => {
             transform: translate(-50%, -35%);
             position: absolute;
             left: ${padPlace}px;
-            background-image: url('/images/track-pad.svg');
+            background-image: url('./images/track-pad.svg');
             background-repeat: no-repeat;
             background-size: contain;
             background-position: center;

@@ -14,8 +14,7 @@ const Next = ({ display }) => {
         z-index: 1000;
         bottom: 0;
         left: 0;
-        background-image: url('/images/next.png');
-        background-image: url(/images/next.png);
+        background-image: url('./images/next.png');
         background-position: center bottom;
         background-size: contain;
         background-repeat: no-repeat;

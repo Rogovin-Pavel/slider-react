@@ -7,26 +7,26 @@ import './index.css';
 const content = [
   {
     type: 'image',
-    url: '/images/box_1.png'
+    url: './images/box_1.png'
   },
   {
     type: 'image',
-    url: '/images/box_2.png'
+    url: './images/box_2.png'
   },
   {
     type: 'slider',
     content: [
       {
         type: 'image',
-        url: '/images/box_3_1.png'
+        url: './images/box_3_1.png'
       },
       {
         type: 'image',
-        url: '/images/box_3_2.png'
+        url: './images/box_3_2.png'
       },
       {
         type: 'image',
-        url: '/images/box_3_3.png'
+        url: './images/box_3_3.png'
       },
     ]
   },
