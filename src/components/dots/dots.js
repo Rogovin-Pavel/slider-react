@@ -1,25 +1,26 @@
 
 /** @jsx jsx */
-import React from 'react'
-import { css, jsx } from '@emotion/core'
+import React from 'react';
+import { css, jsx } from '@emotion/core';
+import { v4 as uuidv4 } from 'uuid';
 
 const Dot = ({ active }) => (
   <span
     css={css`
-      padding: 10px;
-      margin-bottom: 5px;
+      padding: 13px;
+      margin-bottom: 15px;
       cursor: pointer;
       border-radius: 50%;
-      background: ${active ? 'yellow' : 'white'};
+      background: ${active ? '#f78b1f' : '#ffffff'};
     `}
   />
-)
+);
 
 const Dots = ({ slides, activeIndex }) => (
   <div
     css={css`
       position: absolute;
-      right: 25px;
+      right: 50px;
       top: 50%;
       transform: translateY(-50%);
       display: flex;
@@ -30,11 +31,11 @@ const Dots = ({ slides, activeIndex }) => (
     `}
   >
     {slides.map((slide, i) => (
-      <Dot key={slide} active={activeIndex === i} />
+      <Dot key={uuidv4()} active={activeIndex === i} />
     ))}
   </div>
-)
+);
 
 export {
   Dots
-}
+};

@@ -4,126 +4,165 @@ import { css, jsx } from '@emotion/core'
 import { SliderContent } from './../slider_content';
 import { Slide } from './../slide';
 import { Dots } from './../dots';
+import { TrackBar } from './../track_bar';
+import { Next } from './../next';
+
+import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 
 /**
  * @function Slider
  */
-const Slider = (props) => {
-  const getHeight = () => window.innerHeight;
-  const sliderRef = React.useRef();
-  const thumbRef = React.useRef();
-  const diff = React.useRef();
-  const next = React.useRef();
+const Slider = ({ settings, slides }) => {
+  const { sliderDots, 
+      sliderDirection, 
+      trackBar, 
+      trackBarDesc, 
+      showNext 
+    } = settings,
+    getWidth = () => window.innerWidth,
+    getHeight = () => window.innerHeight,
+    getSlideLength = sliderDirection === 'Y' ? getHeight : getWidth,
+    sliderRef = React.useRef(),
+    thumbRef = React.useRef(),
+    diff = React.useRef(),
+    moveEnd = React.useRef(),
 
-  const [state, setState] = useState({
-    activeIndex: 0,
-    translate: 0,
-    transition: 0.45,
-    direction: 'down',
-    cursorPlacement: 0
-  });
+    [state, setState] = useState({
+      activeIndex: 0,
+      translate: 0,
+      transition: 0.45,
+      cursorPlacement: 0
+    }),
 
-  const { translate, transition, activeIndex } = state;
+    { translate, transition, activeIndex } = state,
 
-  const nextSlide = () => {
-    if (activeIndex === props.slides.length - 1) {
-      return setState({
+    navigateTo = (pageNum) => {
+      setState({
         ...state,
-        translate: 0,
-        activeIndex: 0
-      })
-    }
+        activeIndex: pageNum,
+        translate: pageNum * getSlideLength()
+      });
+    },
+
+    nextSlide = () => {
+      if (activeIndex === slides.length - 1) {
+        return setState({
+          ...state,
+          translate: 0,
+          activeIndex: 0
+        })
+      }
 
     setState({
       ...state,
       activeIndex: activeIndex + 1,
-      translate: (activeIndex + 1) * getHeight()
-    })
-  }
+      translate: (activeIndex + 1) * getSlideLength()
+    });
+  },
 
-  const prevSlide = () => {
+  prevSlide = () => {
     if (activeIndex === 0) {
       return setState({
         ...state,
-        translate: (props.slides.length - 1) * getHeight(),
-        activeIndex: props.slides.length - 1
+        translate: (slides.length - 1) * getSlideLength(),
+        activeIndex: slides.length - 1
       })
     }
 
     setState({
       ...state,
       activeIndex: activeIndex - 1,
-      translate: (activeIndex - 1) * getHeight()
+      translate: (activeIndex - 1) * getSlideLength()
     })
-  }
+  },
 
-  const calcCoords =  _.debounce((e) => {
-    let original_event = e.type === 'touchmove' ? e.touches[0] : e;
-    next.current = original_event.clientY;
-  }, 100);
+  handleMove = e => {
+    let original_event = e.type === 'mousemove' ? e : e.touches[0];
+    e.preventDefault();
+    e.stopPropagation();
 
-  const handleMove = event => {
-    event.preventDefault();
-    console.log('moved');
-    
-    // console.log(event);
-    // event.preventDefault();
-    // calcCoords(event);
-  };
+    const calcCurrentPlace = _.debounce(() => {
+      moveEnd.current = original_event.clientY;
+    }, 50);
+
+    calcCurrentPlace();
+  },
  
-  const handleEndMove = (event) => {
-      console.log(diff.current, event.clientY);
-      
-      if (diff.current < event.clientY) {
+  handleEndMove = (e) => {
+
+      if (diff.current < moveEnd.current) {
         prevSlide();
-      } else if (diff.current > event.clientY) {
+      } else if (diff.current > moveEnd.current) {
         nextSlide();
       }
 
-    if (event.type === 'touchstart') {
+    if (e.type === 'touchstart') {
       document.removeEventListener('touchmove', handleMove);
       document.removeEventListener('touchend', handleEndMove);
     } else {
       document.removeEventListener('mousemove', handleMove);
       document.removeEventListener('mouseup', handleEndMove);
     }
-  };
+  },
 
-  const handleStartMove = (e) => {
+  handleStartMove = (e) => {
     diff.current = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
 
     if (e.type === 'mousedown') {
       document.addEventListener('mousemove', handleMove);
       document.addEventListener('mouseup', handleEndMove);
-    } else if (e.type === 'touchstart') {
+    } else {
       document.addEventListener('touchmove', handleMove);
       document.addEventListener('touchend', handleEndMove);
     }
-  };
+  },
 
+  SlidesContent = sliderDirection === 'Y' ? 
+    <SliderContent
+      ref={thumbRef}
+      onMouseDown={(e) => handleStartMove(e)}
+      onTouchStart={(e) => handleStartMove(e)}
+      translate={translate}
+      transition={transition}
+      height={`${getSlideLength() * slides.length}px`}
+      width={'100%'}
+      flexDirection={'column'}
+      direction={sliderDirection}
+    > 
+      {slides.map((slide, i) => (
+        <Slide key={uuidv4()} content={slide} width={getWidth()}/>
+      ))}
+    </SliderContent> :
+    <SliderContent
+      ref={thumbRef}
+      translate={translate}
+      transition={transition}
+      width={`${getSlideLength() * slides.length}px`}
+      height={'100%'}
+      flexDdirection={'row'}
+      direction={sliderDirection}
+    >
+      {slides.map((slide, i) => (
+        <Slide key={uuidv4()} content={slide} width={getWidth()}/>
+      ))}
+    </SliderContent>
+  
   return (
-    <div css={SliderCSS} ref={sliderRef}>
-      <SliderContent
-        ref={thumbRef}
-        onMouseDown={(e) => handleStartMove(e)}
-        onTouchStart={(e) => handleStartMove(e)}
-        translate={translate}
-        transition={transition}
-        height={getHeight()}
-      >
-        {props.slides.map((slide, i) => (
-          <Slide key={slide + i} content={slide}/>
-        ))}
-      </SliderContent>
-      <Dots slides={props.slides} activeIndex={activeIndex} />
-    </div>
+    <React.Fragment>
+      <div css={SliderCSS} ref={sliderRef}>
+        {SlidesContent}
+        {sliderDots ? <Dots slides={slides} activeIndex={activeIndex} /> : null }
+      </div>
+      {trackBar ? <TrackBar navigateTo={(pageNum) => navigateTo(pageNum)} barLength={'700'} barDesc={!_.isUndefined(trackBarDesc) ? trackBarDesc : null}/> : null }
+      <Next display={ showNext && activeIndex < slides.length - 1 ? 'block' : 'none' }/>
+    </React.Fragment>
   );
 };
 
 const SliderCSS = css`
   position: relative;
-  height: 100vh;
+  height: 99vh;
   width: 100vw;
   margin: 0 auto;
   overflow: hidden;

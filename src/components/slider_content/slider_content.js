@@ -3,13 +3,13 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 const SliderContent = styled.div`
-        transform: translateY(-${props => props.translate}px);
+        transform: translate${props => props.direction}(-${props => props.translate}px);
         transition: transform ease-out ${props => props.transition}s;
-        height: 100%;
-        width: 100%;
+        height: ${props => props.height};
+        width: ${props => props.width};
         background-color: gray;
         display: flex;
-        flex-direction: column;
-        align-items: center;`
+        flex-direction: ${props => props.flexDirection};
+       `
 
 export { SliderContent };
